@@ -60,13 +60,25 @@ class DataHandler():
 		self.ohlcv_save_to_json(ticker, ticker_name)
 		return ticker
 
-	def refresh_tickers(self, timeframe="5"):
+	def refresh_tickers(self, timeframe="D"):
 		tickers = {}
 		pair_list = config.PAIR_LIST
 		pair_list = pair_list.split()
 		for i in range(len(pair_list)):
-			ticker = self.refresh_ticker(pair_list[i], "D")
+			ticker = self.refresh_ticker(pair_list[i], timeframe)
 			tickers[pair_list[i]] = ticker.copy()
+		return tickers
+
+	def update_live_tickers(self, tickers, timeframe="D"):
+		pair_list = config.PAIR_LIST
+		pair_list = pair_list.split()
+		for i in range(len(pair_list)):
+			ticker_name = pair_list[i]
+			timestamp = tickers[ticker_name]['date'].iloc[-1]
+			ticker = self.fetch_ticker(ticker_name, timeframe, from_date=timestamp)
+			tickers[ticker_name].append(ticker)
+			tickers[ticker_name] = tickers[ticker_name].drop_duplicates(subset='date')
+			self.ohlcv_save_to_json(tickers[ticker_name], ticker_name)
 		return tickers
 
 
