@@ -100,5 +100,5 @@ class Client:
 
 # Forex candles
 # ticker = finnhub_client.forex_candles('FXPRO:4', '5', 1593604800, 1596110400)
-# ticker = DataHandler.ohlcv_load_from_dict(ticker)
+# ticker = data_handler.ohlcv_load_from_dict(ticker)
 # print(ticker)

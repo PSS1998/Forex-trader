@@ -1,6 +1,10 @@
 
 
 PAIR_LIST = "FXPRO:4 FXPRO:6"
-API = "bsgta37rh5rdc8pmr8dg"
+API = "YOUR FINNHUB API"
 
-STATE = "trade"
+STATE = "backtest"
+
+STRATEGY = "test_strategy"
+
+TIMEFRAME = "D"

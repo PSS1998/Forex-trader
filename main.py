@@ -1,16 +1,11 @@
 
-
-import finnhub_api
-import datahandler
-import config
+from forex_bot import forex_bot
 
 
+if __name__ == "__main__":
 
-finnhub_client = finnhub_api.Client(api_key=config.API)
-DataHandler = datahandler.DataHandler()
+    start_date = "2020/01/15"
+    end_date = "2020/08/20"
 
-
-
-
-tickers = DataHandler.refresh_tickers()
-print(tickers)
+    bot = forex_bot()
+    bot.start(start_date, end_date)
