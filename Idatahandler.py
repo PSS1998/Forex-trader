@@ -29,16 +29,32 @@ class Idata_handler(ABC):
 		ticker.sort_values('date', inplace=True)
 		return ticker
 
+	def fetch_ticker(self, ticker_name, from_date=0, to_date=0):
+		timeframe = config.TIMEFRAME
+		if to_date==0:
+			to_time = datetime.datetime.now()
+			to_time = int(to_time.replace(tzinfo=datetime.timezone.utc).timestamp())
+		else:
+			to_time = to_date
+		if from_date==0:
+			from_time = datetime.datetime.now() - datetime.timedelta(30)
+			from_time = int(from_time.replace(tzinfo=datetime.timezone.utc).timestamp())
+		else:
+			from_time = from_date
+		ticker = self.API.get_candles(ticker_name, timeframe, from_time, to_time)
+		ticker = self.ohlcv_load_from_dict(ticker)
+		return ticker
+
 	def ohlcv_save(self, ticker, ticker_name):
 		pass
 
 	def ohlcv_load(self, ticker_name):
 		pass
 
-	def refresh_tickers(self, timeframe="D"):
+	def refresh_tickers(self):
 		pass
 
-	def update_live_tickers(self, tickers, timeframe="D"):
+	def update_live_tickers(self, tickers):
 		pass
 
 	def fetch_backtest_tickers(self, start_date, end_date):
