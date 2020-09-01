@@ -27,7 +27,7 @@ class Istrategy(ABC):
 		if(state == "trade"):
 			tickers = self.data_handler.refresh_tickers()
 			while True:
-				time.sleep(5)
+				time.sleep(self.utility.timeframe_to_timestamp())
 				tickers = self.data_handler.update_live_tickers(tickers)
 				self.on_ticker(tickers)
 		elif(state == "backtest"):
@@ -47,6 +47,8 @@ class Istrategy(ABC):
 			
 
 	def backtest(self, tickers):
+		money_change = []
+		time_change = []
 		for ticker_name, ticker in tickers.items():
 			df = self.indicator(ticker)
 			index = min(30, (len(df.index)-1))
@@ -61,22 +63,35 @@ class Istrategy(ABC):
 				if self.sell_trend(df.head(index)):
 					if self.trades[ticker_name].open!=0:
 						self.trades[ticker_name].close = df['close'].iloc[index]
-						self.trades[ticker_name].profit += (self.trades[ticker_name].close/self.trades[ticker_name].open)-1
+						profit = (self.trades[ticker_name].close/self.trades[ticker_name].open)-1
+						self.trades[ticker_name].profit += profit
 						self.trades[ticker_name].open = 0
 						self.trades[ticker_name].close = 0
+						total_money = profit
+						money_change.append(total_money)
+						time_change.append(df['date'].iloc[index])
 				if self.general_sell_strategy(ticker_name, df.head(index)):
 					if self.trades[ticker_name].open!=0:
 						self.trades[ticker_name].close = df['close'].iloc[index]
-						self.trades[ticker_name].profit += (self.trades[ticker_name].close/self.trades[ticker_name].open)-1
+						profit = (self.trades[ticker_name].close/self.trades[ticker_name].open)-1
+						self.trades[ticker_name].profit += profit
 						self.trades[ticker_name].open = 0
 						self.trades[ticker_name].close = 0
+						total_money = profit
+						money_change.append(total_money)
+						time_change.append(df['date'].iloc[index])
 				index += 1
 			if self.trades[ticker_name].open!=0:
 				if self.trades[ticker_name].close==0:
 					self.trades[ticker_name].close = df['close'].iloc[-1]
+					profit = (self.trades[ticker_name].close/self.trades[ticker_name].open)-1
+					self.trades[ticker_name].profit += profit
 					self.trades[ticker_name].open = 0
 					self.trades[ticker_name].close = 0
-		self.utility.analyze_profit(self.trades)
+					total_money = profit
+					money_change.append(total_money)
+					time_change.append(df['date'].iloc[-1])
+		self.utility.analyze_profit(self.trades, (money_change,time_change))
 
 	def general_sell_strategy(self, ticker_name, ticker):
 		if((ticker['close'].iloc[-1]/self.trades[ticker_name].open)-1) < -0.02:

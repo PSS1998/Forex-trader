@@ -17,6 +17,7 @@ class simple_strategy(Istrategy.Istrategy):
 		df['bb_mid'] = bb['mid']
 		df['close'] = ticker['close']
 		df['volume'] = ticker['volume']
+		df['date'] = ticker['date']
 		df = pd.DataFrame(df)
 		df = df.reset_index(drop=True)
 

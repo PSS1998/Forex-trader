@@ -119,7 +119,13 @@ class data_handler_json(Idatahandler.Idata_handler):
 			if os.path.isfile(constants.BACKTEST_DATA+ticker_name+":"+timeframe+'.json'):
 				ticker = self._ohlcv_load_from_json(ticker_name)
 				start_dates = self._get_ticker_start_dates(ticker)
-				start_date_available_index = next(x for x, val in enumerate(start_dates) if val > (start_date+timestamp_jump-1))-1
+				if len(start_dates)>1:
+					start_date_available_index = next(x for x, val in enumerate(start_dates) if val > (start_date+timestamp_jump-1))-1
+				else:
+					if start_dates[0] > (start_date+timestamp_jump-1):
+						start_date_available_index = 0
+					else:
+						start_date_available_index = -1
 				if start_date_available_index!=-1:
 					end_date_available = self._get_ticker_end_date_continuous(ticker, start_dates[start_date_available_index])
 				else:
