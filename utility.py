@@ -46,12 +46,12 @@ class utility():
             final_money_change += money_change[i]*100
             final_money_change_list.append(final_money_change)
         total_profit = 0
+        total_trade_num = 0
         for trade_name, trade in trades.items():
             if trade.num!=0:
                 total_profit += trade.profit
+                total_trade_num += trade.num
                 print(trade_name + " " + "number of trades: " + str(trade.num) + ", profit: " + str(trade.profit))
-        print("total profit = " + str(total_profit))
+        print("total profit = " + str(total_profit) + ", total number of trade = " + str(total_trade_num))
         plt.plot(time_change, final_money_change_list)
         plt.show()
-
-

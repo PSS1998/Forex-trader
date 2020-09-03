@@ -10,7 +10,7 @@ class API():
         self.utility = utility.utility()
 
     def get_candles(self, ticker_name, timeframe, from_time, to_time):
-        print("getting candles for " + ticker_name)
+        # print("getting candles for " + ticker_name)
         # time.sleep(5)
         diff_time = to_time-from_time
         time_list = []

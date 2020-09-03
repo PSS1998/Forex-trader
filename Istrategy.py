@@ -27,9 +27,9 @@ class Istrategy(ABC):
 		if(state == "trade"):
 			tickers = self.data_handler.refresh_tickers()
 			while True:
+				self.on_ticker(tickers)
 				time.sleep(self.utility.timeframe_to_timestamp())
 				tickers = self.data_handler.update_live_tickers(tickers)
-				self.on_ticker(tickers)
 		elif(state == "backtest"):
 			start_date = self.utility.parse_date(start_date)
 			end_date = self.utility.parse_date(end_date)
@@ -43,7 +43,11 @@ class Istrategy(ABC):
 			if self.buy_trend(df):
 				self.reporter.notify_buy(ticker_name)
 			if self.sell_trend(df):
-				self.reporter.notify_sell(ticker_name)
+				if self.trades[ticker_name].open!=0:
+					self.reporter.notify_sell(ticker_name)
+			if self.general_sell_strategy(ticker_name, df):
+				if self.trades[ticker_name].open!=0:
+					self.reporter.notify_sell(ticker_name)
 			
 
 	def backtest(self, tickers):
@@ -94,8 +98,9 @@ class Istrategy(ABC):
 		self.utility.analyze_profit(self.trades, (money_change,time_change))
 
 	def general_sell_strategy(self, ticker_name, ticker):
-		if((ticker['close'].iloc[-1]/self.trades[ticker_name].open)-1) < -0.02:
-			return True
+		if(self.trades[ticker_name].open != 0):
+			if((ticker['close'].iloc[-1]/self.trades[ticker_name].open)-1) < -0.02:
+				return True
 		return False
 
 	@abstractmethod
