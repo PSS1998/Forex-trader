@@ -19,11 +19,11 @@ This is an algorithmic trading and backtesting platform to use and test your str
 - [ ] make sleep time "realy" 5 min or less
 - [ ] make start trade from beginning not five min later
 - [ ] change backtest buy sell price from next index to current index
-- [ ]use other than finnhub (look for alternative) like alphavantage or use yahoo finance if possible
-- [ ]add AI model to predict price
-- [ ]add RL model to decide what action to do based on prediction
-- [ ]add basic csv or json support for data
-- [ ]add plots for equity and stock price over time to compare
-- [ ]add trades and  indicators and conditions on stock price over time to find problems in strategy
+- [ ] use other than finnhub (look for alternative) like alphavantage or use yahoo finance if possible
+- [ ] add AI model to predict price
+- [ ] add RL model to decide what action to do based on prediction
+- [ ] add basic csv or json support for data
+- [ ] add plots for equity and stock price over time to compare
+- [ ] add trades and  indicators and conditions on stock price over time to find problems in strategy
 - [ ] backtest add more data for analysis like Equity Final, Equity Peak, Max. Drawdown, Avg. Drawdown, Max. Drawdown Duration, Avg. Drawdown Duration, Best Trade, Worst Trade, Sharpe Ratio, Sortino Ratio, Calmar Ratio and profit and winrate for each trading pair
 
