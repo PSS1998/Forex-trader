@@ -24,8 +24,10 @@ class Idata_handler(ABC):
 		if(ticker.columns[4] == 's'):
 			ticker.drop(ticker.columns[4], axis=1, inplace=True)
 			ticker.columns = ['close', 'high', 'low', 'open', 'date', 'volume']
+			# ticker.columns = ['close', 'high', 'low', 'open', 'date']
 		else:
 			ticker.columns = ['close', 'high', 'low', 'open', 'date', 'volume']
+			# ticker.columns = ['close', 'high', 'low', 'open', 'date']
 		ticker.sort_values('date', inplace=True)
 		return ticker
 
@@ -42,6 +44,8 @@ class Idata_handler(ABC):
 		else:
 			from_time = from_date
 		ticker = self.API.get_candles(ticker_name, timeframe, from_time, to_time)
+		if(ticker['s']=="no_data"):
+			raise exceptions.FinnhubRequestException("No Data!")
 		ticker = self.ohlcv_load_from_dict(ticker)
 		return ticker
 

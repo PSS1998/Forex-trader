@@ -16,15 +16,8 @@ class binhv27_strategy(Istrategy.Istrategy):
 	def indicator(self, ticker):
 		df = {}
 
-		# df['ema'] = indicators.wma(ticker['close'], window=30)
-		# bb = indicators.bollinger_bands(ticker['close'])
-		# df['bb_low'] = bb['lower']
-		# df['bb_mid'] = bb['mid']
-
-
 		dataframe = ticker
 
-		# print(dataframe)
 		df['rsi'] = pd.DataFrame(numpy.nan_to_num(ta.RSI(dataframe, timeperiod=5)))
 		rsiframe = pd.DataFrame(df['rsi'])
 		rsiframe.columns = ['close']
@@ -39,42 +32,18 @@ class binhv27_strategy(Istrategy.Istrategy):
 		plusdiframe.columns = ['close']
 		df['plusdiema'] = pd.DataFrame(numpy.nan_to_num(ta.EMA(plusdiframe, timeperiod=5)))
 		df['lowsma'] = pd.DataFrame(numpy.nan_to_num(ta.EMA(dataframe, timeperiod=60)))
-		# print(type(ta.EMA(dataframe, timeperiod=60)))
 		df['highsma'] = pd.DataFrame(numpy.nan_to_num(ta.EMA(dataframe, timeperiod=120)))
 		df['fastsma'] = pd.DataFrame(numpy.nan_to_num(indicators.sma(dataframe['close'], window=120)))
 		df['slowsma'] = pd.DataFrame(numpy.nan_to_num(indicators.sma(dataframe['close'], window=240)))
-		# a = (df['fastsma'] - df['slowsma'])
-		# a.columns = ['close']
-		# print((df['fastsma'] - df['slowsma']))
-		# b = pd.DataFrame(dataframe['close'] / 300)
-		# print((dataframe['close'] / 300))
-		# c = a.values > b.values
-		# print(pd.DataFrame(pd.DataFrame(df['fastsma'] - df['slowsma']) > pd.DataFrame(dataframe['close'] / 300)))
-		# print(((df['fastsma'] - df['slowsma']) > (dataframe['close'] / 300)))
-		
-		# print(type(df['fastsma']))
-		# print(df['fastsma']>df['slowsma'])
+
 		df['trend'] = pd.DataFrame(df['fastsma'] - df['slowsma'])
-		# print((df['trend']))
-		# print(df['trend'].columns)
 		df['trend'].columns = ['close']
-		# print(df['trend'].columns)
-		# print((pd.DataFrame(dataframe['close'] / 300)))
-		# print(df['trend'].gt(pd.DataFrame(dataframe['close'] / 300)))
 		temp = df['fastsma'].gt(df['slowsma'])
 		temp.columns = ['close']
-		# a = (df['trend'].gt(pd.DataFrame(dataframe['close'].reset_index() / 300)))
-		# print(len(a))
-		# print(df['trend'])
-		# print(pd.DataFrame(dataframe['close'].reset_index() / 300))
-		# print(a)
-
+	
 		df['bigup'] = pd.DataFrame(temp & pd.DataFrame(df['trend'].gt(pd.DataFrame(dataframe['close'].reset_index() / 300))))
 		df['bigdown'] = pd.DataFrame(~df['bigup'])
-		# df['trend'] = pd.DataFrame(df['trend'])
-		# print(pd.DataFrame(dataframe['close'] / 300))
-		# print(df['bigup'])
-		# print(pd.DataFrame(df['trend'].gt(pd.DataFrame(dataframe['close'] / 300))))
+	
 		df['preparechangetrend'] = pd.DataFrame(df['trend'].gt(df['trend'].shift()))
 		df['preparechangetrendconfirm'] = pd.DataFrame(df['preparechangetrend'] & (df['trend'].shift().gt(df['trend'].shift(2))))
 		df['continueup'] = pd.DataFrame((df['slowsma'].gt(df['slowsma'].shift())) & (df['slowsma'].shift().gt(df['slowsma'].shift(2))))
@@ -85,24 +54,16 @@ class binhv27_strategy(Istrategy.Istrategy):
 
 		# sd = {}
 		df['close'] = pd.DataFrame(ticker['close'])
-		# print(sd['close'])
 		df['volume'] = pd.DataFrame(ticker['volume'])
 		df['date'] = pd.DataFrame(ticker['date'])
-		# print(sd)
 		for key in df:
-			# print(key)
-			# print(len(df[key]))
 			df[key] = df[key].values.tolist()
-		# print(type(df['bigdown']))
 		df = pd.DataFrame(df)
-		# print(df)
 		df = df.reset_index(drop=True)
 
 		return df
 
 	def buy_trend(self, ticker):
-		# buy = ((ticker['close'].iloc[-1][0]<ticker['ema'].iloc[-1][0]) and ((ticker['close'].iloc[-1][0])<(0.999*ticker['bb_low'].iloc[-1][0])))
-		# print(ticker['slowsma'].iloc[-1][0])
 		buy =(	(ticker['slowsma'].iloc[-1][0]>0) and
 				((ticker['close'].iloc[-1][0])<(ticker['highsma'].iloc[-1][0])) and
 				((ticker['close'].iloc[-1][0])<(ticker['lowsma'].iloc[-1][0])) and

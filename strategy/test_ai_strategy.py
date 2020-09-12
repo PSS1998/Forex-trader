@@ -9,25 +9,21 @@ import indicators
 import Istrategy
 import constants
 
+import test_ai_model
+
 class test_ai_strategy(Istrategy.Istrategy):
 
 	def indicator(self, ticker):
-        f = open(constants.AI_MODEL+self.__class__.__name__+'.pickle', 'rb')
-        self.model = pickle.load(f)
-		df = {}
-		df['sma'] = indicators.sma(ticker['close'], window=10)
-		df['close'] = ticker['close']
-		df = pd.DataFrame(df)
-		df = df.reset_index(drop=True)
+		df  = test_ai_model.indicators_dataframe(ticker)
 
 		return df
 
 	def buy_trend(self, ticker):
-        buy = self.model.predict(ticker)
+		buy = test_ai_model.predict_buy(ticker)
 
 		return buy
 
 	def sell_trend(self, ticker):
-        sell = self.model.predict(ticker)
+		sell = test_ai_model.predict_sell(ticker)
 
 		return sell

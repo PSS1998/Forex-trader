@@ -11,6 +11,11 @@ import pandas as pd
 from sklearn import preprocessing
 import numpy as np
 
+
+import numpy as np
+from keras.models import load_model
+
+
 history_points = 50
 
 
@@ -24,11 +29,13 @@ def csv_to_dataset(csv_path):
     start_date = utility.parse_date(start_date)
     end_date = utility.parse_date(end_date)
     tickers = data_handler.fetch_backtest_tickers(start_date, end_date)
-    data  = pd.DataFrame(tickers["FXPRO:41"])
+    data  = pd.DataFrame(tickers["FXPRO:1109"])
     cols = data.columns.tolist()
     cols = [cols[4], cols[3], cols[1], cols[2], cols[0], cols[5]]
+    # cols = [cols[4], cols[3], cols[1], cols[2], cols[0]]
     data = data[cols]
     data.columns = ['date', '1. open', '2. high', '3. low', '4. close', '5. volume']
+    # data.columns = ['date', '1. open', '2. high', '3. low', '4. close']
 
     # print(data)
 
@@ -76,7 +83,7 @@ def csv_to_dataset(csv_path):
     technical_indicators_normalised = tech_ind_scaler.fit_transform(technical_indicators)
 
     assert ohlcv_histories_normalised.shape[0] == next_day_open_values_normalised.shape[0] == technical_indicators_normalised.shape[0]
-    return ohlcv_histories_normalised, technical_indicators_normalised, next_day_open_values_normalised, next_day_open_values, y_normaliser
+    return (ohlcv_histories_normalised, technical_indicators_normalised, next_day_open_values_normalised, next_day_open_values, y_normaliser)
 
 
 
@@ -244,6 +251,8 @@ def predict_test():
         # print(ohlcv.reshape(1, ohlcv.shape[0], ohlcv.shape[1]).shape)
         # print(ind.reshape(1, ind.shape[0]).shape)
         # result = model.predict(ohlcv.reshape(1, ohlcv.shape[0], ohlcv.shape[1]), ind.reshape(1, ind.shape[0]))
+        # print([np.array([ohlcv,]), np.array([ind,])])
+        print(len(ohlcv))
         result = model.predict([np.array([ohlcv,]), np.array([ind,])])
         predicted_price_tomorrow = np.squeeze(y_normaliser.inverse_transform(result))
         # predicted_price_tomorrow = np.squeeze(y_test_predicted[count-1])
@@ -298,11 +307,64 @@ def predict_test():
     plt.show()
 
 
-def predict(ticker):
-    pass
+def predict_buy(ticker):
+
+    model = load_model(constants.AI_MODEL+'technical_model.h5')
+    ohlcv_histories, technical_indicators, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('MSFT_intraday.csv')
+
+    ohlcv_test = ohlcv_histories[-50:]
+    tech_ind_test = technical_indicators[-50:]
+    y_test = next_day_open_values[-50:]
+
+    unscaled_y_test = unscaled_y[-50:]
+    print(len(ohlcv_test))
+
+    normalised_price_today = ohlcv_test[-1][0]
+    normalised_price_today = [normalised_price_today]
+    # print(normalised_price_today)
+    price_today = y_normaliser.inverse_transform(normalised_price_today)
+
+    # print([ohlcv_test, tech_ind_test])
+    result = model.predict([np.array(ohlcv_test), np.array(tech_ind_test)])
+    predicted_price_tomorrow = np.squeeze(y_normaliser.inverse_transform(result))
+
+    thresh = 0.1
+    
+    delta = predicted_price_tomorrow[-1] - price_today
+    if delta > thresh:
+        return True
+
+
+def predict_sell(ticker):
+    
+    model = load_model(constants.AI_MODEL+'technical_model.h5')
+    ohlcv_histories, technical_indicators, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('MSFT_intraday.csv')
+
+    ohlcv_test = ohlcv_histories[:]
+    tech_ind_test = technical_indicators[:]
+    y_test = next_day_open_values[:]
+
+    unscaled_y_test = unscaled_y[:]
+
+    normalised_price_today = ohlcv[-1][0]
+    normalised_price_today = np.array([[normalised_price_today]])
+    price_today = y_normaliser.inverse_transform(normalised_price_today)
+
+    result = model.predict([np.array([ohlcv_test,]), np.array([tech_ind_test,])])
+    predicted_price_tomorrow = np.squeeze(y_normaliser.inverse_transform(result))
+
+    thresh = 0.1
+    
+    delta = predicted_price_tomorrow - price_today
+    if delta < thresh:
+        return True
+
+
+def indicators_dataframe(ticker):
+    return csv_to_dataset("csv_path")
 
 
 
-
-train()
-predict_test()
+if __name__ == "__main__":
+    # train()
+    predict_test()

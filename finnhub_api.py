@@ -7,11 +7,11 @@ from exceptions import FinnhubAPIException
 from exceptions import FinnhubRequestException
 
 
-class Client:
+class Client():
     API_URL = "https://finnhub.io/api/v1"
     DEFAULT_TIMEOUT = 10
 
-    def _init_(self, api_key):
+    def __init__(self, api_key):
         self._session = self._init_session(api_key)
 
     @staticmethod
