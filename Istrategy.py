@@ -27,7 +27,7 @@ class Istrategy(ABC):
 		if(state == "trade"):
 			tickers = self.data_handler.refresh_tickers()
 			while True:
-				time.sleep(self.utility.timeframe_to_timestamp())
+				self.reporter.notify_time()
 				try:
 					tickers = self.data_handler.update_live_tickers(tickers)
 					self.on_ticker(tickers)
@@ -35,6 +35,7 @@ class Istrategy(ABC):
 					print("There was a problem with the data")
 				# tickers = self.data_handler.update_live_tickers(tickers)
 				# self.on_ticker(tickers)
+				time.sleep(self.utility.timeframe_to_timestamp())
 		elif(state == "backtest"):
 			start_date = self.utility.parse_date(start_date)
 			end_date = self.utility.parse_date(end_date)

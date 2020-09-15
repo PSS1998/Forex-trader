@@ -9,3 +9,6 @@ class reporter_terminal(Ireporter.Ireporter):
 
 	def notify_sell(self, currency_name):
 		print(str(strftime("%Y-%m-%d %H:%M:%S", localtime())) + ": sell "+currency_name)
+
+	def notify_time(self):
+		print(str(strftime("%Y-%m-%d %H:%M:%S", localtime())))
