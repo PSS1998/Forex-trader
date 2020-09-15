@@ -28,13 +28,13 @@ class Istrategy(ABC):
 			tickers = self.data_handler.refresh_tickers()
 			while True:
 				self.reporter.notify_time()
-				try:
-					tickers = self.data_handler.update_live_tickers(tickers)
-					self.on_ticker(tickers)
-				except:
-					print("There was a problem with the data")
-				# tickers = self.data_handler.update_live_tickers(tickers)
-				# self.on_ticker(tickers)
+				# try:
+				# 	tickers = self.data_handler.update_live_tickers(tickers)
+				# 	self.on_ticker(tickers)
+				# except:
+				# 	print("There was a problem with the data")
+				tickers = self.data_handler.update_live_tickers(tickers)
+				self.on_ticker(tickers)
 				time.sleep(self.utility.timeframe_to_timestamp())
 		elif(state == "backtest"):
 			start_date = self.utility.parse_date(start_date)
@@ -45,13 +45,14 @@ class Istrategy(ABC):
 
 	def on_ticker(self, tickers):
 		for ticker_name, ticker in tickers.items():
+			ticker_displayname = self.utility.get_pair_displayname(ticker_name)
 			df = self.indicator(ticker)
 			if self.buy_trend(df):
-				self.reporter.notify_buy(ticker_name)
+				self.reporter.notify_buy(ticker_displayname)
 			if self.sell_trend(df):
-				self.reporter.notify_sell(ticker_name)
+				self.reporter.notify_sell(ticker_displayname)
 			if self.general_sell_strategy(ticker_name, df):
-				self.reporter.notify_sell(ticker_name)
+				self.reporter.notify_sell(ticker_displayname)
 			
 
 	def backtest(self, tickers):
