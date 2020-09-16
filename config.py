@@ -7,6 +7,6 @@ API = "bsgta37rh5rdc8pmr8dg"
 
 STATE = "trade"
 
-STRATEGY = "simple_strategy"
+STRATEGY = "simple2_strategy"
 
 TIMEFRAME = "5"

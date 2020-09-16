@@ -11,7 +11,7 @@ import Istrategy
 # import talib as ta
 import talib_indicators as ta
 
-class binhv27_strategy(Istrategy.Istrategy):
+class simple2_strategy(Istrategy.Istrategy):
 
 	def indicator(self, ticker):
 		df = {}
@@ -53,9 +53,9 @@ class binhv27_strategy(Istrategy.Istrategy):
 
 
 		# sd = {}
-		df['close'] = pd.DataFrame(ticker['close'])
+		df['close'] = ticker['close']
 		df['volume'] = pd.DataFrame(ticker['volume'])
-		df['date'] = pd.DataFrame(ticker['date'])
+		df['date'] = ticker['date']
 		for key in df:
 			df[key] = df[key].values.tolist()
 		df = pd.DataFrame(df)
@@ -65,8 +65,8 @@ class binhv27_strategy(Istrategy.Istrategy):
 
 	def buy_trend(self, ticker):
 		buy =(	(ticker['slowsma'].iloc[-1][0]>0) and
-				((ticker['close'].iloc[-1][0])<(ticker['highsma'].iloc[-1][0])) and
-				((ticker['close'].iloc[-1][0])<(ticker['lowsma'].iloc[-1][0])) and
+				((ticker['close'].iloc[-1])<(ticker['highsma'].iloc[-1][0])) and
+				((ticker['close'].iloc[-1])<(ticker['lowsma'].iloc[-1][0])) and
 				((ticker['minusdi'].iloc[-1][0])>(ticker['minusdiema'].iloc[-1][0])) and
 				((ticker['rsi'].iloc[-1][0])>(ticker['rsi'].iloc[-2][0])) and
 				(
@@ -107,21 +107,21 @@ class binhv27_strategy(Istrategy.Istrategy):
 			  (
 				~ticker['preparechangetrendconfirm'].iloc[-1][0] and
 				~ticker['continueup'].iloc[-1][0] and
-				(ticker['close'].iloc[-1][0]>(ticker['lowsma'].iloc[-1][0]) or ticker['close'].iloc[-1][0]>(ticker['highsma'].iloc[-1][0])) and
+				(ticker['close'].iloc[-1]>(ticker['lowsma'].iloc[-1][0]) or ticker['close'].iloc[-1]>(ticker['highsma'].iloc[-1][0])) and
 				ticker['highsma'].iloc[-1][0]>0 and
 				ticker['bigdown'].iloc[-1][0]
 			  ) or
 			  (
 				~ticker['preparechangetrendconfirm'].iloc[-1][0] and
 				~ticker['continueup'].iloc[-1][0] and
-				(ticker['close'].iloc[-1][0])>(ticker['highsma'].iloc[-1][0]) and
+				(ticker['close'].iloc[-1])>(ticker['highsma'].iloc[-1][0]) and
 				(ticker['highsma'].iloc[-1][0])>0 and
-				(ticker['emarsi'].iloc[-1][0]>75 or ticker['close'].iloc[-1][0]>(ticker['slowsma'].iloc[-1][0])) and
+				(ticker['emarsi'].iloc[-1][0]>75 or ticker['close'].iloc[-1]>(ticker['slowsma'].iloc[-1][0])) and
 				ticker['bigdown'].iloc[-1][0]
 			  ) or
 			  (
 				~ticker['preparechangetrendconfirm'].iloc[-1][0] and
-				ticker['close'].iloc[-1][0]>(ticker['highsma'].iloc[-1][0]) and
+				ticker['close'].iloc[-1]>(ticker['highsma'].iloc[-1][0]) and
 				ticker['highsma'].iloc[-1][0]>0 and
 				ticker['adx'].iloc[-1][0]>30 and
 				ticker['emarsi'].iloc[-1][0]>80 and
@@ -137,7 +137,7 @@ class binhv27_strategy(Istrategy.Istrategy):
 			  (
 				ticker['preparechangetrendconfirm'].iloc[-1][0] and
 				ticker['minusdi'].iloc[-1][0]<(ticker['plusdi'].iloc[-1][0]) and
-				ticker['close'].iloc[-1][0]>(ticker['lowsma'].iloc[-1][0]) and
+				ticker['close'].iloc[-1]>(ticker['lowsma'].iloc[-1][0]) and
 				ticker['slowsma'].iloc[-1][0]>0
 			  )
 			)
