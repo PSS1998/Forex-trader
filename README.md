@@ -9,7 +9,7 @@ This is an algorithmic trading and backtesting platform to use and test your str
 - [ ] add get pair and get exchange function to main
 - [ ] clean model.py
 - [X] add strategy for model.py
-- [ ] make simple2_startegy df output correct and same as simple_startegy
+- [X] make simple2_startegy df output correct and same as simple_startegy
 - [ ] handle TA input scalar instead of double
 - [ ] handle data error so that user can see wich pair was the problem
 - [ ] test in trade mode for long period of time
@@ -17,7 +17,7 @@ This is an algorithmic trading and backtesting platform to use and test your str
 - [ ] add edge calculation to decide how much money to put in a trade
 - [ ] add slipage and comission and spread of buy and sell
 - [ ] make sleep time "realy" 5 min or less
-- [ ] make start trade from beginning not five min later
+- [X] make start trade from beginning not five min later
 - [ ] change backtest buy sell price from next index to current index
 - [ ] use other than finnhub (look for alternative) like alphavantage or use yahoo finance if possible
 - [ ] add AI model to predict price
